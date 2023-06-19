@@ -1,4 +1,4 @@
-\ screen support     uho 2019-08-24
+\ screen support     uho 2019-08-24 revicsed 2023-06-19
 
 0 free [IF]
 : free ( c-addr -- ior ) \ freeing 0 is ok 
@@ -6,7 +6,7 @@
 [THEN]
 
 [undefined] slurp-file [IF]
-: slurp-file 
+: slurp-file ( c-addr u -- )
   r/o bin open-file throw >r 
   r@ file-size throw Abort" file too large" 
   dup allocate throw swap 
@@ -152,7 +152,7 @@ use screenfile.fs
 \ : \  10 parse 2drop ; immediate
 
 
-:  index ( from to -- )
+: index ( from to -- )
      1+ swap ?DO
        cr  I 3 .R   space I screen  0 line   type
      LOOP ;
@@ -161,8 +161,9 @@ use screenfile.fs
     scr @  30 / 30 * dup 30 + index ;
 
 
-: loads ( u -- ) Create , Does> @ load ;
-: utility ( u -- ) Constant ;
-: by ( u -- )  Create , Does> @ load ;
+: utility ( u <name> -- ) Constant ;
+
+: loads ( u <name> -- ) Create , Does> @ load ;
+: by ( u <name> -- )  Create , Does> @ load ;
 
 0 by hi
