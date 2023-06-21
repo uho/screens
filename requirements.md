@@ -1,4 +1,4 @@
-# Screens.fs requirements docuemntation
+# Screens.fs requirements documentation
 
 ### Standard conformant labeling
 
