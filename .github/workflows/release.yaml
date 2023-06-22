@@ -6,6 +6,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -14,7 +18,7 @@ jobs:
       id: get_version
       run: echo "VERSION=$(cat VERSION)" >> $GITHUB_ENV
 
-    - name: Extrahiere Repositoryname
+    - name: Extract Repositoryname
       id: get_repo
       run: echo "REPO=$(echo ${{ github.repository }} | cut -d '/' -f 2)" >> $GITHUB_ENV
 
