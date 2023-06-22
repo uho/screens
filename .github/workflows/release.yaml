@@ -16,7 +16,9 @@ jobs:
 
     - name: Read version number
       id: get_version
-      run: echo "VERSION=$(cat VERSION)" >> $GITHUB_ENV
+      run: echo "VERSION=$(grep 'key-value version' package.4th | awk '{print $3}')" >> $GITHUB_ENV
+
+
 
     - name: Extract Repositoryname
       id: get_repo
