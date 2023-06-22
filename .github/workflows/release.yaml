@@ -16,9 +16,19 @@ jobs:
 
     - name: Read version number
       id: get_version
-      run: echo "VERSION=$(grep 'key-value version' package.4th | awk '{print $3}')" >> $GITHUB_ENV
-
-
+      run: |
+        VERSION_LINE=$(grep 'key-value version' package.4th)
+        PREVIOUS_VERSION_LINE=$(git show HEAD^:package.4th | grep 'key-value version')
+        if [ "$VERSION_LINE" = "$PREVIOUS_VERSION_LINE" ]; then
+          VERSION=$(echo $VERSION_LINE | awk -F'{print $3}')
+          MAJOR=$(echo $VERSION | cut -d. -f1)
+          MINOR=$(echo $VERSION | cut -d. -f2)
+          PATCH=$(echo $VERSION | cut -d. -f3)
+          PATCH=$((PATCH + 1))
+          echo "VERSION=${MAJOR}.${MINOR}.${PATCH}" >> $GITHUB_ENV
+        else
+          echo "VERSION=$(echo $VERSION_LINE | awk '{print $3}')" >> $GITHUB_ENV
+        fi
 
     - name: Extract Repositoryname
       id: get_repo
