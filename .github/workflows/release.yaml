@@ -18,7 +18,7 @@ jobs:
       id: get_version
       run: |
         VERSION_LINE=$(grep 'key-value version' package.4th)
-        PREVIOUS_VERSION_LINE=$(git show HEAD^:package.4th | grep 'key-value version')
+        PREVIOUS_VERSION_LINE=$(git show HEAD\^:package.4th | grep 'key-value version')
         if [ "$VERSION_LINE" = "$PREVIOUS_VERSION_LINE" ]; then
           VERSION=$(echo $VERSION_LINE | awk -F'{print $3}')
           MAJOR=$(echo $VERSION | cut -d. -f1)
