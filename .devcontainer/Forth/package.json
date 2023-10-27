@@ -1,7 +1,7 @@
 {
     "name": "forth",
     "version": "1.0.0",
-    "publisher": "uho@xlerb.de",
+    "publisher": "uho",
     "repository" : {
         "type": "git",
         "url": "https://https://github.com/uho/screens.git"

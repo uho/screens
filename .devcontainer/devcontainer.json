@@ -8,7 +8,7 @@
         "vscode": {
             "extensions": [
 				"eamodio.gitlens",
-				"uho.forth"
+				"fttx.language-forth"
 			]
         },
         "settings": { 
