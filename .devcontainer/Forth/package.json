@@ -1,0 +1,17 @@
+{
+    "name": "forth",
+    "version": "1.0.0",
+    "publisher": "uho@xlerb.de",
+    "engines": {
+        "vscode": "^1.8.0"
+    },
+    "contributes": {
+        "grammars": [
+            {
+                "language": "Forth",
+                "scopeName": "source.Forth",
+                "path": "./syntaxes/Forth.tmLanguage"
+            }
+        ]
+    }
+}
