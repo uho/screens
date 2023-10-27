@@ -6,6 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # This sets up a basic environment and installs Gforth.
 RUN apt-get update && apt-get install -y \
+    git \
     gforth \
     # You can include other necessary tools here, depending on your development needs.
     && apt-get autoremove -y \
