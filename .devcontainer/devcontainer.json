@@ -4,20 +4,19 @@
         "dockerfile": "Dockerfile"
     },
 
-    "settings": { 
-        "terminal.integrated.shell.linux": "/bin/bash",
-        "git.enabled": true,
-        "git.autofetch": true,
-        "git.confirmSync": false
-    },
-
     "customizations": {
         "vscode": {
             "extensions": [
-                "eamodio.gitlens"
-            ]
+				"eamodio.gitlens",
+				"fttx.language-forth"
+			]
+        },
+        "settings": { 
+            "terminal.integrated.shell.linux": "/bin/bash",
+            "git.enabled": true,
+            "git.autofetch": true,
+            "git.confirmSync": false
         }
     }
-
 }
 
