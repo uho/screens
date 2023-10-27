@@ -13,6 +13,10 @@ jobs:
       contents: write
 
     steps:
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
+
     - name: Checkout repository
       uses: actions/checkout@v2
 
@@ -27,14 +31,23 @@ jobs:
         draft: false
         prerelease: false
 
-#    - name: Upload Release-Asset
-#      id: upload_release_asset
-#      uses: actions/upload-release-asset@v1
-#      env:
-#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#      with:
-#        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-#        asset_path: ../${{ env.REPO }}-${{ env.VERSION }}.zip
-#        asset_name: ${{ env.REPO }}-${{ env.VERSION }}.zip
-#        asset_content_type: application/zip
+    - name: Download Release Asset
+      run: | # https://github.com/uho/screens/archive/refs/tags/1.17.0.zip
+        curl -s -L -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            ${{ github.server_url }}/${{ github.repository }}/archive/refs/tags/${{ steps.get_version.outputs.VERSION }}.zip \
+            -o ${{ github.event.repository.name }}-${{ steps.get_version.outputs.VERSION }}.zip
+
+    - name: List Files
+      run: ls -l
+
+    - name: Upload Release-Asset
+      id: upload_release_asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ${{ github.event.repository.name }}-${{ steps.get_version.outputs.VERSION }}.zip
+        asset_name: ${{ github.event.repository.name }}-${{ steps.get_version.outputs.VERSION }}.zip
+        asset_content_type: application/zip
 
