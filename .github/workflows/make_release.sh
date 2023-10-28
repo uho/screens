@@ -8,6 +8,18 @@
 # "make_release --minor master" to increase the minor number of the latest tag and create a tag on branch main for the new version
 # "make_release --major master" to increase the major number of the latest tag and create a tag on branch main for the new version
 
+function get_base_directory {
+  local base_dir
+  pushd "`dirname $0`/../.." >/dev/null
+  base_dir=`pwd`
+  popd >/dev/null
+  echo $base_dir
+}
+
+function get_version_file {
+   echo $(get_base_directory)/package.4th
+}
+
 function get_latest_tag {
   git fetch --tags
   latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1))
@@ -31,6 +43,15 @@ function increment_version {
   echo $new_version
 }
 
+function update_version_file {
+  local new_version=$1
+  local version_file=$(get_version_file)
+  echo "$version_file" 
+  sed -i "s/key-value version .*/key-value version $new_version/" "$version_file"
+  git add "$version_file"
+  git commit -m "Update version to $new_version"
+}
+
 function make_tag {
   local version=$1
   local branch=${2:-$(git branch --show-current)}
@@ -39,21 +60,34 @@ function make_tag {
   git push origin $branch $version
 }
 
-if [[ $1 =~ ^([0-9]+\.){2}[0-9]+$ ]]; then
-  make_tag $1 $2
-elif [[ $1 == "--patch" ]]; then
-  latest_tag=$(get_latest_tag)
-  new_version=$(increment_version $latest_tag 2)
-  make_tag $new_version $2
-elif [[ $1 == "--minor" ]]; then
-  latest_tag=$(get_latest_tag)
-  new_version=$(increment_version $latest_tag 1)
-  make_tag $new_version $2
-elif [[ $1 == "--major" ]]; then
-  latest_tag=$(get_latest_tag)
-  new_version=$(increment_version $latest_tag 0)
-  make_tag $new_version $2
-else
-  echo "Usage: make_release (version | --major | --minor | -patch) branch"
-  exit 1
-fi
+function main {
+  local new_version
+  local current_version
+  local branch=${2:-$(git branch --show-current)}
+  
+  if [[ $1 =~ ^([0-9]+\.){2}[0-9]+$ ]]; then
+    new_version=$1
+  elif [[ $1 == "--patch" || $1 == "--minor" || $1 == "--major" ]]; then
+    local field_index
+    case $1 in 
+      "--patch") field_index=2;;
+      "--minor") field_index=1;;
+      "--major") field_index=0;;
+    esac
+    local latest_tag=$(get_latest_tag)
+    new_version=$(increment_version $latest_tag $field_index)
+  else
+    echo "Usage: make_release.sh (version | --major | --minor | --patch) [branch]"
+    exit 1
+  fi
+  
+  current_version=$(grep "key-value version" $(get_version_file) | awk '{print $3}')
+  
+  if [[ $new_version != $current_version ]]; then
+    update_version_file $new_version
+  fi
+  
+  make_tag $new_version $branch
+}
+
+main $1 $2
